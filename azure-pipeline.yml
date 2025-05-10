@@ -1,0 +1,21 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'YOUR_AZURE_SERVICE_CONNECTION'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az login --service-principal -u $SERVICE_PRINCIPAL_ID -p $SERVICE_PRINCIPAL_SECRET --tenant $TENANT_ID
+      terraform init
+      terraform plan
+      terraform apply -auto-approve
+  env:
+    SERVICE_PRINCIPAL_ID: $(servicePrincipalId)
+    SERVICE_PRINCIPAL_SECRET: $(servicePrincipalSecret)
+    TENANT_ID: $(tenantId)
